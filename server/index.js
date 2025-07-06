@@ -382,25 +382,17 @@ const supabase = createClient(
 
 // Middleware
 const allowedOrigins = [
-  "http://localhost:5173", // Development
-  "http://localhost:5173", // Localhost for production too
-  process.env.FRONTEND_URL, // Environment variable for production
+  "http://localhost:5173", // Development frontend
+  "https://pubhub-bolt.netlify.app", // Production frontend
+  process.env.FRONTEND_URL, // Additional frontend URL from env
 ].filter(Boolean); // Remove undefined values
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        console.log("CORS blocked origin:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins, // Use the allowedOrigins array
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
